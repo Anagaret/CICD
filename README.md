@@ -18,7 +18,7 @@ The following guides illustrate how to use some features concretely:
 
 ----
 
-docker run -p 8080:8080 -p 50000:50000 -v /home/mario/data/jenkins:/var/jenkins_home -name jenkins jenkins:2.60.3
+docker run -p 8080:8080 -p 50000:50000 -v /home/mario/data/jenkins:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/bin/docker -name jenkins jenkins:2.60.3
 
 ./mvnw clean install
 
@@ -29,3 +29,5 @@ java -jar target/cicd-0.0.1-SNAPSHOT.jar
 docker build -t ping .
 
 docker run -it --rm -p 8081:8080 --name ping ping
+
+docker push -f ping
