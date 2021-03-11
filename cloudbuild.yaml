@@ -1,14 +1,35 @@
 steps:
-- name: maven:latest
-  args: ['mvn', 'clean', 'install', '-D', 'skipTest']
-- name: maven:latest
+- name: 'maven:latest'
+  args: ['echo', 'debut build']
+  args: ['mvn', 'clean', 'install', '-D', 'skipTests']
+  timeout: 100s
+- name: 'maven:latest'
+  args: ['echo', 'debut du test maven']
   args: ['mvn', 'test']
-- name: node:latest
-  args: ['npm', 'run']
-  args: ['npm', 'build']
-  args: ['echo', 'yo', 'node']
+  timeout: 100s  
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args: ['-c', 'docker login --username=anagaret --password=waM3GcWFYyUPwkX']
-  args: ['-c', 'docker build -t anagaret/java-ci-cd .']
-  args: ['-c', 'docker push anagaret/java-ci-cd']
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'docker build -t anagaret/javaimages:1.0.1 .']
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'docker push anagaret/javaimages:1.0.1']
+- name: node:latest
+  dir: 'jsproject'
+  args: ['npm', 'install']
+  args: ['npm', 'run', 'build']
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'docker login --username=anagaret --password=waM3GcWFYyUPwkX']
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  dir: 'jsproject'
+  args: ['cd', 'jsproject']
+  args: ['-c', 'docker build -t anagaret/javascriptimages:1.0.1 .']
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  dir: 'jsproject'
+  args: ['cd', 'jsproject']
+  args: ['-c', 'docker push anagaret/javascriptimages:1.0.1']
